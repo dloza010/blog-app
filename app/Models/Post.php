@@ -4,6 +4,7 @@
 
 	use Illuminate\Database\Eloquent\ModelNotFoundException;
 	use Illuminate\Support\Facades\File;
+	use mysql_xdevapi\Exception;
 	use Spatie\YamlFrontMatter\YamlFrontMatter;
 
 	class Post
@@ -29,18 +30,8 @@
 			$this->slug = $slug;
 		}
 
-		public static function find($slug)
-		{
-				//find the post with the matching slug
-
-			$posts = static::all();
-
-			return $posts->firstWhere('slug', $slug);
-		}
-
 		public static function all()
 		{
-
 			return cache()->rememberForever('posts.all', function (){
 				$files = File::files(resource_path('posts'));
 				return collect($files)
@@ -54,7 +45,23 @@
 					))
 					->sortByDesc('date');
 			});
-
 		}
 
+		public static function find($slug)
+		{
+			//find the post with the matching slug
+			return static::all()->firstWhere('slug', $slug);
+		}
+
+		public static function findOrFail($slug)
+		{
+			//find the post with the matching slug
+			$post = static::find($slug);
+
+			if (! $post){
+				throw new ModelNotFoundException();
+			}
+
+			return $post;
+		}
 	}
