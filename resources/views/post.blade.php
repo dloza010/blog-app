@@ -4,10 +4,14 @@
             {{ $post->title }}
         </h1>
 
+        <p>
+            <a href="">{{ $post->category->name }}</a>
+        </p>
+
         <div>
-            <p>{!! $post->body !!}</p>
+            {!! $post->body !!}
         </div>
     </article>
-
+    <br>
     <a href="/">Go Back</a>
 </x-layout>
